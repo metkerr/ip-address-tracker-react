@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import patternBg from "./images/pattern-bg.png";
 import "leaflet/dist/leaflet.css";
 import searchArrow from "./images/icon-arrow.svg";
@@ -30,7 +30,6 @@ function App() {
         setIpData(res.data);
         setLatlang([res.data.location?.lat, res.data.location?.lng]);
       });
-      console.log("api trigger");
     }, 500);
 
     return () => clearTimeout(timer);
