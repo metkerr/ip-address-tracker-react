@@ -75,16 +75,16 @@ function App() {
             </h1>
             <div
               id="search-input-wrapper"
-              className="bg-white rounded-2xl w-full flex sm:w-128 sm:mx-auto"
+              className="bg-white rounded-2xl w-full flex sm:w-128 sm:mx-auto  "
             >
               <input
                 type="search"
-                className="grow rounded-2xl px-6 text-lg"
+                className="grow rounded-2xl px-6 text-lg cursor-pointer"
                 placeholder="Search for any IP address or domain"
                 value={searchIP}
                 onChange={(e) => setSearchIP(e.target.value)}
               />
-              <button className="font-bold h-full bg-black text-white px-6 py-5.5 rounded-r-2xl text-xl">
+              <button className="font-bold h-full bg-black text-white px-6 py-5.5 rounded-r-2xl text-xl hover:bg-very-dark-gray active:bg-gray-900">
                 <img src={searchArrow} alt="search arrow button" />
               </button>
             </div>
@@ -98,7 +98,7 @@ function App() {
             >
               <div
                 id="details"
-                className="rounded-2xl bg-white p-7  flex flex-col mx-auto text-center gap-3.5 font-semibold text-very-dark-gray tracking-wide sm:flex-row sm:text-left sm:justify-between sm:w-full sm:m-1 sm:my-2"
+                className="rounded-2xl bg-white p-7  flex flex-col mx-auto text-center gap-3.5 font-semibold text-very-dark-gray tracking-wide sm:flex-row sm:text-left sm:justify-between sm:w-full sm:m-1 sm:my-2 sm:break-all"
               >
                 <div id="ip-address-wrapper">
                   <h3 className="text-2xs  text-dark-gray tracking-x-wide pb-1.5">
