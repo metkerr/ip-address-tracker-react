@@ -1,32 +1,34 @@
 import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import patternBg from "./images/pattern-bg.png";
 import "leaflet/dist/leaflet.css";
 import searchArrow from "./images/icon-arrow.svg";
 import markerIcon from "./images/icon-location.svg";
 import Leaflet from "leaflet";
 import axios from "axios";
+import isValidDomain from "./utils/isValidDomain";
 
 function App() {
   const [ipData, setIpData] = useState({});
   const [searchIP, setSearchIP] = useState("");
-  const [useFlyTo, setUseFlyTo] = useState();
+  const [latlang, setLatlang] = useState([-6.1752, 106.8272]);
 
   useEffect(() => {
+    //this web app is built for learning & experimenting purposes, therefore this kind of API request is strongly NOT recommended due to exposing the API key to the client, please consider using a server-side request for an API request that requires an API KEY.
+
     //set timout to prevent trigger api everytime use type
     const timer = setTimeout(() => {
       axios(
         `https://geo.ipify.org/api/v2/country,city?apiKey=${
           process.env.REACT_APP_KEY
-        }&${searchIP && `ipAddress=${searchIP}`}`
+        }&${
+          searchIP && isValidDomain(searchIP)
+            ? `domain=${searchIP}`
+            : `ipAddress=${searchIP}`
+        }`
       ).then((res) => {
         setIpData(res.data);
+        setLatlang([res.data.location?.lat, res.data.location?.lng]);
       });
       console.log("api trigger");
     }, 500);
@@ -34,15 +36,9 @@ function App() {
     return () => clearTimeout(timer);
   }, [searchIP]);
 
-  const HandleMapChange = () => {
-    const map = useMapEvents({
-      click: () => {
-        map.locate();
-      },
-      locationfound: (location) => {
-        console.log("location found:", location);
-      },
-    });
+  const HandleMapChange = ({ position }) => {
+    const map = useMap();
+    if (position) map.panTo(position, 14, { animate: true, duration: 1.5 });
     return null;
   };
 
@@ -58,8 +54,6 @@ function App() {
     iconSize: new Leaflet.Point(47, 56),
     className: "bg-blend-color-burn",
   });
-
-  console.log(ipData);
 
   return (
     <div id="App">
@@ -143,22 +137,21 @@ function App() {
       <main>
         <div id="map-wrapper">
           <div id="map" className="overflow-auto h-full">
-            <MapContainer
-              center={[-6.1752, 106.8272]}
-              zoom={13}
-              scrollWheelZoom={true}
-              zoomControl={false}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[-6.1752, 106.8272]} icon={markerCustomIcon}>
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-              </Marker>
-            </MapContainer>
+            {latlang && (
+              <MapContainer
+                center={latlang}
+                zoom={13}
+                scrollWheelZoom={true}
+                zoomControl={false}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={latlang} icon={markerCustomIcon} />
+                <HandleMapChange position={latlang} />
+              </MapContainer>
+            )}
           </div>
         </div>
       </main>
