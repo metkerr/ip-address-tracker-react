@@ -12,6 +12,7 @@ function App() {
   const [ipData, setIpData] = useState({});
   const [searchIP, setSearchIP] = useState("");
   const [latlang, setLatlang] = useState([-6.1752, 106.8272]);
+  const [errorMsg, seterrorMsg] = useState();
 
   useEffect(() => {
     //this web app is built for learning & experimenting purposes, therefore this kind of API request is strongly NOT recommended due to exposing the API key to the client, please consider using a server-side request for an API request that requires an API KEY.
@@ -26,10 +27,13 @@ function App() {
             ? `domain=${searchIP}`
             : `ipAddress=${searchIP}`
         }`
-      ).then((res) => {
-        setIpData(res.data);
-        setLatlang([res.data.location?.lat, res.data.location?.lng]);
-      });
+      )
+        .then((res) => {
+          setIpData(res.data);
+          setLatlang([res.data.location?.lat, res.data.location?.lng]);
+          seterrorMsg("");
+        })
+        .catch((err) => seterrorMsg(err?.message));
     }, 500);
 
     return () => clearTimeout(timer);
@@ -55,78 +59,90 @@ function App() {
   });
 
   return (
-    <div id="App">
-      <header
-        className="h-76 bg-cover bg-center flex container"
-        style={{ backgroundImage: `url(${patternBg})` }}
-      >
+    <div id="App" className="min-w-min">
+      <header className="sm:flex">
         <div
-          id="header-wrapper"
-          className="m-auto mt-7 flex flex-col w-full mx-6"
+          id="header-container"
+          className="h-76 bg-cover bg-bottom flex sm:w-full sm:h-64"
+          style={{ backgroundImage: `url(${patternBg})` }}
         >
-          <h1 className="text-white text-2.5xl font-medium tracking-wide mx-auto mb-7">
-            IP Adress Tracker
-          </h1>
           <div
-            id="search-input-wrapper"
-            className="bg-white rounded-2xl w-full flex"
+            id="header-wrapper"
+            className="m-auto mt-7 flex flex-col w-full mx-6 sm:container sm:mx-auto"
           >
-            <input
-              type="search"
-              className="grow rounded-2xl px-6 text-lg"
-              placeholder="Search for any IP address or domain"
-              value={searchIP}
-              onChange={(e) => setSearchIP(e.target.value)}
-            />
-            <button className="font-bold h-full bg-black text-white px-6 py-5.5 rounded-r-2xl text-xl">
-              <img src={searchArrow} alt="search arrow button" />
-            </button>
-          </div>
-          <div
-            id="details-wrapper"
-            className="rounded-2xl flex bg-white mt-6 shadow-md"
-            style={{ zIndex: 9999 }}
-          >
+            <h1 className="text-white text-2.5xl font-medium tracking-wide mx-auto mb-7 sm:text-3xl sm:mt-2.5">
+              IP Adress Tracker
+            </h1>
             <div
-              id="details"
-              className="rounded-2xl bg-white p-7  flex flex-col mx-auto text-center gap-3.5 font-semibold text-very-dark-gray tracking-wide"
+              id="search-input-wrapper"
+              className="bg-white rounded-2xl w-full flex sm:w-128 sm:mx-auto"
             >
-              <div id="ip-address-wrapper">
-                <h3 className="text-2xs  text-dark-gray tracking-x-wide pb-1.5">
-                  IP ADDRESS
-                </h3>
-                <div className="text-xl" id="ip-address">
-                  {ipData?.ip || "Unknown"}
+              <input
+                type="search"
+                className="grow rounded-2xl px-6 text-lg"
+                placeholder="Search for any IP address or domain"
+                value={searchIP}
+                onChange={(e) => setSearchIP(e.target.value)}
+              />
+              <button className="font-bold h-full bg-black text-white px-6 py-5.5 rounded-r-2xl text-xl">
+                <img src={searchArrow} alt="search arrow button" />
+              </button>
+            </div>
+            <p className="pt-1 text-center font-semibold text-white text-red-300">
+              {errorMsg && `*${errorMsg}`}
+            </p>
+            <div
+              id="details-wrapper"
+              className="rounded-2xl flex bg-white mt-6 shadow-md sm:w-11/12 sm:mx-auto"
+              style={{ zIndex: 9999 }}
+            >
+              <div
+                id="details"
+                className="rounded-2xl bg-white p-7  flex flex-col mx-auto text-center gap-3.5 font-semibold text-very-dark-gray tracking-wide sm:flex-row sm:text-left sm:justify-between sm:w-full sm:m-1 sm:my-2"
+              >
+                <div id="ip-address-wrapper">
+                  <h3 className="text-2xs  text-dark-gray tracking-x-wide pb-1.5">
+                    IP ADDRESS
+                  </h3>
+                  <div className="text-xl" id="ip-address">
+                    {ipData?.ip || "Unknown"}
+                  </div>
                 </div>
-              </div>
-              <div id="location-wrapper">
-                <h3 className="text-2xs text-dark-gray tracking-x-wide pb-1.5">
-                  LOCATION
-                </h3>
-                <div className="text-xl" id="location">
-                  {`${ipData?.location?.city || ""} ${
-                    ipData.location?.country ? "," : ""
-                  } ${ipData?.location?.country || "Unknown"} ${
-                    ipData?.location?.postalCode || ""
-                  }`}
+                <div
+                  id="location-wrapper"
+                  className="sm:border-l-2 sm:pl-6 sm:py-2"
+                >
+                  <h3 className="text-2xs text-dark-gray tracking-x-wide pb-1.5">
+                    LOCATION
+                  </h3>
+                  <div className="text-xl" id="location">
+                    {`${ipData?.location?.city || ""} ${
+                      ipData.location?.country ? "," : ""
+                    } ${ipData?.location?.country || "Unknown"} ${
+                      ipData?.location?.postalCode || ""
+                    }`}
+                  </div>
                 </div>
-              </div>
-              <div id="timezone-wrapper">
-                <h3 className="text-2xs text-dark-gray tracking-x-wide pb-1.5">
-                  TIMEZONE
-                </h3>
-                <div className="text-xl" id="timezone">
-                  {ipData.location?.timezone
-                    ? `UTC${ipData.location.timezone}`
-                    : "Unknown"}
+                <div
+                  id="timezone-wrapper"
+                  className="sm:border-l-2 sm:pl-6 sm:py-2"
+                >
+                  <h3 className="text-2xs text-dark-gray tracking-x-wide pb-1.5">
+                    TIMEZONE
+                  </h3>
+                  <div className="text-xl" id="timezone">
+                    {ipData.location?.timezone
+                      ? `UTC${ipData.location.timezone}`
+                      : "Unknown"}
+                  </div>
                 </div>
-              </div>
-              <div id="isp-wrapper">
-                <h3 className="text-2xs text-dark-gray tracking-x-wide pb-1.5">
-                  ISP
-                </h3>
-                <div className="text-xl" id="isp">
-                  {ipData.isp ? ipData.isp : "Unknown"}
+                <div id="isp-wrapper" className="sm:border-l-2 sm:pl-6 sm:py-2">
+                  <h3 className="text-2xs text-dark-gray tracking-x-wide pb-1.5">
+                    ISP
+                  </h3>
+                  <div className="text-xl" id="isp">
+                    {ipData.isp ? ipData.isp : "Unknown"}
+                  </div>
                 </div>
               </div>
             </div>

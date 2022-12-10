@@ -10,6 +10,10 @@ module.exports = {
       height: {
         76: "19rem",
       },
+      width: {
+        128: "34rem",
+        256: "72rem",
+      },
       letterSpacing: {
         "x-wide": "0.17em",
       },

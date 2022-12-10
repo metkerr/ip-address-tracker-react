@@ -15,3 +15,9 @@ body{
 #map-wrapper{
     height: calc(100vh - 19rem);
 }
+
+@media screen and (min-width: 640px) {
+    #map-wrapper{
+        height: calc((100vh - 16rem));
+    }
+  }
