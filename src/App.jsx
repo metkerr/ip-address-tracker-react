@@ -100,7 +100,7 @@ function App() {
                 id="details"
                 className="rounded-2xl bg-white p-7  flex flex-col mx-auto text-center gap-3.5 font-semibold text-very-dark-gray tracking-wide sm:flex-row sm:text-left sm:justify-between sm:w-full sm:m-1 sm:my-2 sm:break-all"
               >
-                <div id="ip-address-wrapper">
+                <div id="ip-address-wrapper" className="sm:py-2">
                   <h3 className="text-2xs  text-dark-gray tracking-x-wide pb-1.5">
                     IP ADDRESS
                   </h3>
